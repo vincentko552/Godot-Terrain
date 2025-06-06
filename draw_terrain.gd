@@ -4,6 +4,7 @@ class_name DrawTerrainMesh extends CompositorEffect
 
 @export var side_length : int = 2
 @export var regenerate : bool = true
+@export var wireframe : bool = false
 var transform : Transform3D
 
 var rd : RenderingDevice
@@ -11,10 +12,13 @@ var p_framebuffer : RID
 
 var p_render_pipeline : RID
 var p_render_pipeline_uniform_set : RID
+var p_wire_render_pipeline : RID
 var p_vertex_buffer : RID
 var p_vertex_array : RID
 var p_index_buffer : RID
 var p_index_array : RID
+var p_wire_index_buffer : RID
+var p_wire_index_array : RID
 var p_shader : RID
 var clear_colors := PackedColorArray([Color.DARK_BLUE])
 
@@ -84,6 +88,7 @@ func initialize_render(framebuffer_format : int):
 
 
     var index_buffer := PackedInt32Array([])
+    var wire_index_buffer := PackedInt32Array([])
 
     for row in range(0, side_length * side_length - side_length, side_length):
         for i in side_length - 1:
@@ -95,6 +100,7 @@ func initialize_render(framebuffer_format : int):
             var v3 = v + 1
 
             index_buffer.append_array([v0, v1, v2, v0, v2, v3])
+            wire_index_buffer.append_array([v0, v1, v0, v2, v0, v3, v1, v2, v2, v3])
 
     
     var vertex_buffer_bytes : PackedByteArray = vertex_buffer.to_byte_array()
@@ -122,8 +128,12 @@ func initialize_render(framebuffer_format : int):
 
     var index_buffer_bytes : PackedByteArray = index_buffer.to_byte_array()
     p_index_buffer = rd.index_buffer_create(index_buffer.size(), rd.INDEX_BUFFER_FORMAT_UINT32, index_buffer_bytes)
+    
+    var wire_index_buffer_bytes : PackedByteArray = wire_index_buffer.to_byte_array()
+    p_wire_index_buffer = rd.index_buffer_create(wire_index_buffer.size(), rd.INDEX_BUFFER_FORMAT_UINT32, wire_index_buffer_bytes)
 
     p_index_array = rd.index_array_create(p_index_buffer, 0, index_buffer.size())
+    p_wire_index_array = rd.index_array_create(p_wire_index_buffer, 0, wire_index_buffer.size())
     
     var raster_state = RDPipelineRasterizationState.new()
     
@@ -140,6 +150,7 @@ func initialize_render(framebuffer_format : int):
     blend.attachments.push_back(RDPipelineColorBlendStateAttachment.new())
     
     p_render_pipeline = rd.render_pipeline_create(p_shader, framebuffer_format, vertex_format, rd.RENDER_PRIMITIVE_TRIANGLES, raster_state, RDPipelineMultisampleState.new(), depth_state, blend)
+    p_wire_render_pipeline = rd.render_pipeline_create(p_shader, framebuffer_format, vertex_format, rd.RENDER_PRIMITIVE_LINES, raster_state, RDPipelineMultisampleState.new(), depth_state, blend)
 
 
 func _render_callback(_effect_callback_type : int, render_data : RenderData):
@@ -194,9 +205,17 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
     rd.draw_command_begin_label("Terrain Mesh", Color(1.0, 1.0, 1.0, 1.0))
 
     var draw_list = rd.draw_list_begin(p_framebuffer, rd.DRAW_IGNORE_ALL, clear_colors, 1.0,  0,  Rect2(), 0)
-    rd.draw_list_bind_render_pipeline(draw_list, p_render_pipeline)
+
+    if wireframe:
+        rd.draw_list_bind_render_pipeline(draw_list, p_wire_render_pipeline)
+    else:
+        rd.draw_list_bind_render_pipeline(draw_list, p_render_pipeline)
+        
     rd.draw_list_bind_vertex_array(draw_list, p_vertex_array)
-    rd.draw_list_bind_index_array(draw_list, p_index_array)
+    if wireframe:
+        rd.draw_list_bind_index_array(draw_list, p_wire_index_array)
+    else:
+        rd.draw_list_bind_index_array(draw_list, p_index_array)
     rd.draw_list_bind_uniform_set(draw_list, p_render_pipeline_uniform_set, 0)
     rd.draw_list_draw(draw_list, true, 1)
     rd.draw_list_end()
@@ -208,6 +227,8 @@ func _notification(what):
     if what == NOTIFICATION_PREDELETE:
         if p_render_pipeline.is_valid():
             rd.free_rid(p_render_pipeline)
+        if p_wire_render_pipeline.is_valid():
+            rd.free_rid(p_wire_render_pipeline)
         if p_vertex_array.is_valid():
             rd.free_rid(p_vertex_array)
         if p_vertex_buffer.is_valid():
@@ -216,6 +237,10 @@ func _notification(what):
             rd.free_rid(p_index_array)
         if p_index_buffer.is_valid():
             rd.free_rid(p_index_buffer)
+        if p_wire_index_array.is_valid():
+            rd.free_rid(p_wire_index_array)
+        if p_wire_index_buffer.is_valid():
+            rd.free_rid(p_wire_index_buffer)
         if p_framebuffer.is_valid():
             rd.free_rid(p_framebuffer)
 
