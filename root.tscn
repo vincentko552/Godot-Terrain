@@ -1,3 +1,38 @@
-[gd_scene format=3 uid="uid://bs3wao3xrtlmq"]
+[gd_scene load_steps=7 format=3 uid="uid://bs3wao3xrtlmq"]
+
+[ext_resource type="Script" uid="uid://btn8i0m76hx2y" path="res://debug_camera_controller.gd" id="1_hekff"]
+[ext_resource type="Script" uid="uid://7n58awc2ols0" path="res://draw_terrain.gd" id="2_bqd7a"]
+
+[sub_resource type="Environment" id="Environment_7owt0"]
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_k7fmj"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("2_bqd7a")
+target_node_unique_name = ""
+
+[sub_resource type="Compositor" id="Compositor_1i1cu"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_k7fmj")])
+
+[sub_resource type="BoxMesh" id="BoxMesh_pavbi"]
 
 [node name="Root" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+visible = false
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.60854)
+script = ExtResource("1_hekff")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7owt0")
+compositor = SubResource("Compositor_1i1cu")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("BoxMesh_pavbi")
