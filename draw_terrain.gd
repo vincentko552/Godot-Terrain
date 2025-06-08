@@ -3,6 +3,7 @@ class_name DrawTerrainMesh extends CompositorEffect
 
 
 @export var side_length : int = 2
+@export var scale : float = 1.0
 @export var regenerate : bool = true
 @export var wireframe : bool = false
 var transform : Transform3D
@@ -20,6 +21,7 @@ var p_index_array : RID
 var p_wire_index_buffer : RID
 var p_wire_index_array : RID
 var p_shader : RID
+var p_wire_shader : RID
 var clear_colors := PackedColorArray([Color.DARK_BLUE])
 
 func _init():
@@ -27,10 +29,10 @@ func _init():
     
     rd = RenderingServer.get_rendering_device()
 
-func compile_shader() -> RID:
+func compile_shader(vertex_shader : String, fragment_shader : String) -> RID:
     var src := RDShaderSource.new()
-    src.source_fragment = source_fragment
-    src.source_vertex = source_vertex
+    src.source_vertex = vertex_shader
+    src.source_fragment = fragment_shader
     
     var shader_spirv : RDShaderSPIRV = rd.shader_compile_spirv_from_source(src)
     
@@ -44,7 +46,8 @@ func compile_shader() -> RID:
     return shader
 
 func initialize_render(framebuffer_format : int):
-    p_shader = compile_shader()
+    p_shader = compile_shader(source_vertex, source_fragment)
+    p_wire_shader = compile_shader(source_vertex, source_wire_fragment)
 
     # var _vertex_buffer := PackedFloat32Array([
     #     -0.5,-0.5,0, 1,0,0,1,
@@ -57,7 +60,9 @@ func initialize_render(framebuffer_format : int):
 
     for x in side_length:
         for z in side_length:
-            var pos : Vector3 = Vector3(x, 0, z)
+            var xz : Vector2 = Vector2(x, z) * scale
+
+            var pos : Vector3 = Vector3(xz.x, sin((xz.x + xz.y) * 0.25), xz.y)
             var color : Vector4 = Vector4(randf(), randf(), randf(), 1)
 
             for i in 3: vertex_buffer.push_back(pos[i])
@@ -65,25 +70,26 @@ func initialize_render(framebuffer_format : int):
 
 
     var vertex_count = vertex_buffer.size() / 7
+    print("Vertex Count: " + str(vertex_count))
 
-    for i in vertex_count:
-        var j = i * 7
-        var pos = Vector3()
+    # for i in vertex_count:
+    #     var j = i * 7
+    #     var pos = Vector3()
 
-        pos.x = vertex_buffer[j]
-        pos.y = vertex_buffer[j + 1]
-        pos.z = vertex_buffer[j + 2]
+    #     pos.x = vertex_buffer[j]
+    #     pos.y = vertex_buffer[j + 1]
+    #     pos.z = vertex_buffer[j + 2]
 
-        var color = Vector4()
+    #     var color = Vector4()
 
-        color.x = vertex_buffer[j + 3]
-        color.y = vertex_buffer[j + 4]
-        color.z = vertex_buffer[j + 5]
-        color.w = vertex_buffer[j + 6]
+    #     color.x = vertex_buffer[j + 3]
+    #     color.y = vertex_buffer[j + 4]
+    #     color.z = vertex_buffer[j + 5]
+    #     color.w = vertex_buffer[j + 6]
 
-        print("Vertex " + str(i) + " ---")
-        print("Position: " + str(pos))
-        print("Color: " + str(color))
+    #     print("Vertex " + str(i) + " ---")
+    #     print("Position: " + str(pos))
+    #     print("Color: " + str(color))
 
 
 
@@ -99,8 +105,10 @@ func initialize_render(framebuffer_format : int):
             var v2 = v + side_length + 1
             var v3 = v + 1
 
-            index_buffer.append_array([v0, v1, v2, v0, v2, v3])
-            wire_index_buffer.append_array([v0, v1, v0, v2, v0, v3, v1, v2, v2, v3])
+            index_buffer.append_array([v0, v1, v3, v1, v2, v3])
+            wire_index_buffer.append_array([v0, v1, v0, v3, v1, v3, v1, v2, v2, v3])
+
+    print("Triangle Count: " + str(index_buffer.size() / 3))
 
     
     var vertex_buffer_bytes : PackedByteArray = vertex_buffer.to_byte_array()
@@ -150,7 +158,7 @@ func initialize_render(framebuffer_format : int):
     blend.attachments.push_back(RDPipelineColorBlendStateAttachment.new())
     
     p_render_pipeline = rd.render_pipeline_create(p_shader, framebuffer_format, vertex_format, rd.RENDER_PRIMITIVE_TRIANGLES, raster_state, RDPipelineMultisampleState.new(), depth_state, blend)
-    p_wire_render_pipeline = rd.render_pipeline_create(p_shader, framebuffer_format, vertex_format, rd.RENDER_PRIMITIVE_LINES, raster_state, RDPipelineMultisampleState.new(), depth_state, blend)
+    p_wire_render_pipeline = rd.render_pipeline_create(p_wire_shader, framebuffer_format, vertex_format, rd.RENDER_PRIMITIVE_LINES, raster_state, RDPipelineMultisampleState.new(), depth_state, blend)
 
 
 func _render_callback(_effect_callback_type : int, render_data : RenderData):
@@ -275,5 +283,17 @@ const source_fragment = "
         
         void main(){
             frag_color = a_Color;
+        }
+        "
+
+const source_wire_fragment = "
+        #version 450
+        
+        layout(location = 2) in vec4 a_Color;
+        
+        layout(location = 0) out vec4 frag_color; // Bound to buffer index 0
+        
+        void main(){
+            frag_color = vec4(1, 0, 0, 1);
         }
         "
