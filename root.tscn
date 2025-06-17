@@ -1,29 +1,51 @@
 [gd_scene load_steps=7 format=3 uid="uid://bs3wao3xrtlmq"]
 
 [ext_resource type="Script" uid="uid://btn8i0m76hx2y" path="res://debug_camera_controller.gd" id="1_hekff"]
-[ext_resource type="Script" uid="uid://7n58awc2ols0" path="res://draw_terrain.gd" id="2_bqd7a"]
+[ext_resource type="Script" uid="uid://7n58awc2ols0" path="res://draw_terrain.gd" id="2_pyidc"]
 
 [sub_resource type="Environment" id="Environment_7owt0"]
+background_mode = 1
+background_color = Color(0.36, 0.380667, 0.4, 1)
 
-[sub_resource type="CompositorEffect" id="CompositorEffect_k7fmj"]
+[sub_resource type="CompositorEffect" id="CompositorEffect_pyidc"]
 resource_local_to_scene = false
 resource_name = ""
 enabled = true
 effect_callback_type = 4
 needs_motion_vectors = false
 needs_normal_roughness = false
-script = ExtResource("2_bqd7a")
-target_node_unique_name = ""
+script = ExtResource("2_pyidc")
+regenerate = false
+side_length = 200
+mesh_scale = 1.0
+wireframe = false
+noise_seed = 0
+zoom = 100.0
+offset = Vector3(0, 0, 0)
+gradient_rotation = 0.0
+octave_count = 10
+rotation = 30.0
+angular_variance = Vector2(0, 0)
+initial_amplitude = 0.5
+amplitude_decay = 0.45
+initial_frequency = 2.0
+frequency_variance = Vector2(0, 0)
+height_scale = 50.0
+slope_damping = 0.2
+slope_threshold = Vector2(0.9, 0.98)
+low_slope_color = Color(0.83, 0.88, 0.94, 1)
+high_slope_color = Color(0.16, 0.1, 0.1, 1)
+ambient_light = Color(0.411765, 0.411765, 0.411765, 1)
+metadata/_custom_type_script = "uid://7n58awc2ols0"
 
 [sub_resource type="Compositor" id="Compositor_1i1cu"]
-compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_k7fmj")])
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_pyidc")])
 
 [sub_resource type="BoxMesh" id="BoxMesh_pavbi"]
 
 [node name="Root" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-visible = false
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.60854)
@@ -34,5 +56,5 @@ environment = SubResource("Environment_7owt0")
 compositor = SubResource("Compositor_1i1cu")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-visible = false
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 3.27909, 0)
 mesh = SubResource("BoxMesh_pavbi")
