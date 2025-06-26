@@ -74,7 +74,6 @@ class_name DrawTerrainMesh extends CompositorEffect
 ## Additive light adjustment
 @export var ambient_light : Color = Color.DIM_GRAY
 
-@export var fog_color : Color = Color.BLACK
 
 var transform : Transform3D
 var light : DirectionalLight3D
@@ -220,6 +219,7 @@ func initialize_render(framebuffer_format : int):
 	p_index_array = rd.index_array_create(p_index_buffer, 0, index_buffer.size())
 	p_wire_index_array = rd.index_array_create(p_wire_index_buffer, 0, wire_index_buffer.size())
 	
+	# The rest of this is setting up the render pipeline object, you can read the godot docs to see different settings here but they are largely irrelevant to this project
 	var raster_state = RDPipelineRasterizationState.new()
 	
 	raster_state.cull_mode = RenderingDevice.POLYGON_CULL_BACK
@@ -252,9 +252,7 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
 		initialize_render(rd.framebuffer_get_format(p_framebuffer))
 		regenerate = false
 	
-	
 	var buffer = Array()
-	
 
 	# Assemble the model, view, and projection matrices for vertex world space -> clip space conversion (watch PS1 video if you care about how this works but otherwise it just works(tm))
 	var model = transform
@@ -281,7 +279,7 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
 	else:
 		light_direction = light.transform.basis.z.normalized()
 
-	# Store all shader uniforms in gpu data buffer, this isn't exactly the optimal data layout, each 1.0 push back is wasted space
+	# Store all shader uniforms in a gpu data buffer, this isn't exactly the optimal data layout, each 1.0 push back is wasted space
 	buffer.push_back(light_direction.x)
 	buffer.push_back(light_direction.y)
 	buffer.push_back(light_direction.z)
@@ -318,16 +316,6 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
 	buffer.push_back(ambient_light.g)
 	buffer.push_back(ambient_light.b)
 	buffer.push_back(1.0)
-
-	var camera_position = render_scene_data.get_cam_transform().origin
-	buffer.push_back(camera_position.x)
-	buffer.push_back(camera_position.y)
-	buffer.push_back(camera_position.z)
-	buffer.push_back(1.0)
-	buffer.push_back(fog_color.r)
-	buffer.push_back(fog_color.g)
-	buffer.push_back(fog_color.b)
-	buffer.push_back(fog_color.a)
 	
 
 	# All of our settings are stored in a single uniform buffer, certainly not the best decision, but it's easy to work with
@@ -423,9 +411,6 @@ const source_vertex = "
 			float _FrequencyVarianceUpperBound;
 			float _SlopeDamping;
 			vec4 _AmbientLight;
-			vec3 _CameraPosition;
-			float pad;
-			vec4 _FogColor;
 		};
 		
 		// This is the vertex data layout that we defined in initialize_render after line 198
@@ -617,9 +602,6 @@ const source_fragment = "
 			float _FrequencyVarianceUpperBound;
 			float _SlopeDamping;
 			vec4 _AmbientLight;
-			vec3 _CameraPosition;
-			float pad;
-			vec4 _FogColor;
 		};
 		
 		// These are the variables that we expect to receive from the vertex shader
@@ -761,12 +743,6 @@ const source_fragment = "
 
 			return vec3(height, grad);
 		}
-
-		float fog_factor(float d, float x) {
-			float f = (d / sqrt(log(2.0))) * x;
-
-			return 1 - clamp(exp2(-f * f), 0, 1);	
-		}
 		
 		void main() {
 			// Recalculate initial noise sampling position same as vertex shader
@@ -774,15 +750,6 @@ const source_fragment = "
 
 			// Calculate fbm, we don't care about the height just the derivatives here for the normal vector so the ` + _TerrainHeight - _Offset.y` drops off as it isn't relevant to the derivative
 			vec3 n = _TerrainHeight * fbm(noise_pos.xz);
-
-			vec3 world_pos = pos;
-
-			float distance = length(_CameraPosition - world_pos) - 25;
-
-			vec3 fog_factors = _FogColor.rgb * _FogColor.a;
-			fog_factors.r = fog_factor(fog_factors.r, distance);
-			fog_factors.g = fog_factor(fog_factors.g, distance);
-			fog_factors.b = fog_factor(fog_factors.b, distance);
 
 			// To more easily customize the color slope blending this is a separate normal vector with its horizontal gradients significantly reduced so the normal points upwards more
 			vec3 slope_normal = normalize(vec3(-n.y, 1, -n.z) * vec3(_SlopeDamping, 1, _SlopeDamping));
@@ -806,13 +773,8 @@ const source_fragment = "
 			// Combine lighting values, clip to prevent pixel values greater than 1 which would really really mess up the gamma correction below
 			vec4 lit = clamp(direct_light + ambient_light, vec4(0), vec4(1));
 
-			vec4 fog_color = vec4(0.25);
-			fog_color.a = 1.0;
-
-			vec4 final = mix(lit, fog_color, vec4(fog_factors, 1));
-
 			// Convert from linear rgb to srgb for proper color output, ideally you'd do this as some final post processing effect because otherwise you will need to revert this gamma correction elsewhere
-			frag_color = pow(final, vec4(2.2));
+			frag_color = pow(lit, vec4(2.2));
 		}
 		"
 
