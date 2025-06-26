@@ -80,11 +80,13 @@ var light : DirectionalLight3D
 
 var rd : RenderingDevice
 var p_framebuffer : RID
+var cached_framebuffer_format : int
 
 var p_render_pipeline : RID
 var p_render_pipeline_uniform_set : RID
 var p_wire_render_pipeline : RID
 var p_vertex_buffer : RID
+var vertex_format : int
 var p_vertex_array : RID
 var p_index_buffer : RID
 var p_index_array : RID
@@ -102,7 +104,7 @@ func _init():
 	# Gets whatever light source is in the scene, compositor effects are resources not nodes and so we need to do some jank stuff to get access to the node scene tree
 	var tree := Engine.get_main_loop() as SceneTree
 	var root : Node = tree.edited_scene_root if Engine.is_editor_hint() else tree.current_scene
-	light = root.get_node_or_null('DirectionalLight3D')
+	if root: light = root.get_node_or_null('DirectionalLight3D')
 
 func compile_shader(vertex_shader : String, fragment_shader : String) -> RID:
 	var src := RDShaderSource.new()
@@ -206,8 +208,9 @@ func initialize_render(framebuffer_format : int):
 	vertex_attrs[1].offset = 3 * sizeof_float
 	vertex_attrs[1].stride = stride * sizeof_float
 
-	var vertex_format = rd.vertex_format_create(vertex_attrs)
-	
+	vertex_format = rd.vertex_format_create(vertex_attrs)
+
+
 	p_vertex_array = rd.vertex_array_create(vertex_buffer.size() / stride, vertex_format, vertex_buffers)
 
 	var index_buffer_bytes : PackedByteArray = index_buffer.to_byte_array()
@@ -219,6 +222,14 @@ func initialize_render(framebuffer_format : int):
 	p_index_array = rd.index_array_create(p_index_buffer, 0, index_buffer.size())
 	p_wire_index_array = rd.index_array_create(p_wire_index_buffer, 0, wire_index_buffer.size())
 	
+
+	initialize_render_pipelines(framebuffer_format)
+
+# Initialization of the render pipeline objects is separated from the above code so that we don't have to regenerate everything when the framebuffer format changes
+# otherwise the game would freeze to regenerate the entire terrain every time the window size changes by 1 pixel
+# ideally shader recompilation is separated from the above function too, and generation of the vertex and index buffers also should be separated since that is what causes the stall
+func initialize_render_pipelines(framebuffer_format : int) -> void:
+
 	# The rest of this is setting up the render pipeline object, you can read the godot docs to see different settings here but they are largely irrelevant to this project
 	var raster_state = RDPipelineRasterizationState.new()
 	
@@ -233,12 +244,14 @@ func initialize_render(framebuffer_format : int):
 	var blend = RDPipelineColorBlendState.new()
 	
 	blend.attachments.push_back(RDPipelineColorBlendStateAttachment.new())
-	
+
 	p_render_pipeline = rd.render_pipeline_create(p_shader, framebuffer_format, vertex_format, rd.RENDER_PRIMITIVE_TRIANGLES, raster_state, RDPipelineMultisampleState.new(), depth_state, blend)
 	p_wire_render_pipeline = rd.render_pipeline_create(p_wire_shader, framebuffer_format, vertex_format, rd.RENDER_PRIMITIVE_LINES, raster_state, RDPipelineMultisampleState.new(), depth_state, blend)
 
 
+
 func _render_callback(_effect_callback_type : int, render_data : RenderData):
+	if not enabled: return
 	if _effect_callback_type != effect_callback_type: return
 	
 	var render_scene_buffers : RenderSceneBuffersRD = render_data.get_render_scene_buffers()
@@ -246,12 +259,19 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
 	
 	if not render_scene_buffers: return
 
-	if regenerate:
+	if regenerate or not p_render_pipeline.is_valid():
 		_notification(NOTIFICATION_PREDELETE)
 		p_framebuffer = FramebufferCacheRD.get_cache_multipass([render_scene_buffers.get_color_texture(), render_scene_buffers.get_depth_texture()], [], 1)
 		initialize_render(rd.framebuffer_get_format(p_framebuffer))
 		regenerate = false
-	
+
+	var current_framebuffer = FramebufferCacheRD.get_cache_multipass([render_scene_buffers.get_color_texture(), render_scene_buffers.get_depth_texture()], [], 1)
+
+	# If the framebuffer has changed then we need to reinitialize the render pipeline objects, this happens when the editor window changes or the game window changes
+	if p_framebuffer != current_framebuffer:
+		p_framebuffer = current_framebuffer
+		initialize_render_pipelines(rd.framebuffer_get_format(p_framebuffer))
+
 	var buffer = Array()
 
 	# Assemble the model, view, and projection matrices for vertex world space -> clip space conversion (watch PS1 video if you care about how this works but otherwise it just works(tm))
@@ -358,7 +378,7 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
 	rd.draw_list_bind_uniform_set(draw_list, p_render_pipeline_uniform_set, 0)
 	rd.draw_list_draw(draw_list, true, 1)
 	rd.draw_list_end()
-	
+
 	rd.draw_command_end_label()
 
 
@@ -380,8 +400,6 @@ func _notification(what):
 			rd.free_rid(p_wire_index_array)
 		if p_wire_index_buffer.is_valid():
 			rd.free_rid(p_wire_index_buffer)
-		if p_framebuffer.is_valid():
-			rd.free_rid(p_framebuffer)
 
 
 
