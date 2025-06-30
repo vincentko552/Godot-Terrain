@@ -44,7 +44,7 @@ ambient_light = Color(0.192, 0.2712, 0.3, 1)
 metadata/_custom_type_script = "uid://7n58awc2ols0"
 
 [sub_resource type="Compositor" id="Compositor_1i1cu"]
-compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_vvh5c")])
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_vvh5c"), null])
 
 [node name="Root" type="Node3D"]
 
