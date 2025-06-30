@@ -106,6 +106,7 @@ func _init():
 	var root : Node = tree.edited_scene_root if Engine.is_editor_hint() else tree.current_scene
 	if root: light = root.get_node_or_null('DirectionalLight3D')
 
+# Compiles... the shader...?
 func compile_shader(vertex_shader : String, fragment_shader : String) -> RID:
 	var src := RDShaderSource.new()
 	src.source_vertex = vertex_shader
