@@ -1,7 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://bs3wao3xrtlmq"]
+[gd_scene load_steps=6 format=3 uid="uid://bs3wao3xrtlmq"]
 
-[ext_resource type="Script" uid="uid://btn8i0m76hx2y" path="res://debug_camera_controller.gd" id="1_hekff"]
-[ext_resource type="Script" uid="uid://7n58awc2ols0" path="res://draw_terrain.gd" id="2_pyidc"]
+[ext_resource type="Script" uid="uid://btn8i0m76hx2y" path="res://Scripts/Camera/debug_camera_controller.gd" id="1_hekff"]
+[ext_resource type="Script" uid="uid://7n58awc2ols0" path="res://Scripts/draw_terrain.gd" id="2_pyidc"]
 
 [sub_resource type="Environment" id="Environment_7owt0"]
 background_mode = 1
@@ -12,37 +12,6 @@ glow_intensity = 1.75
 glow_strength = 1.65
 glow_bloom = 0.33
 
-[sub_resource type="CompositorEffect" id="CompositorEffect_pyidc"]
-resource_local_to_scene = false
-resource_name = ""
-enabled = false
-effect_callback_type = 4
-needs_motion_vectors = false
-needs_normal_roughness = false
-script = ExtResource("2_pyidc")
-regenerate = false
-side_length = 2500
-mesh_scale = 0.5
-wireframe = false
-noise_seed = -1256
-zoom = 168.312
-offset = Vector3(1231, 278.83, 542)
-gradient_rotation = -83.897
-octave_count = 32
-rotation = 29.995
-angular_variance = Vector2(-7.845, 8.62)
-initial_amplitude = 0.623
-amplitude_decay = 0.475
-lacunarity = 1.905
-frequency_variance = Vector2(-0.18, 0.12)
-height_scale = 108.9
-slope_damping = 0.135
-slope_threshold = Vector2(0.9, 0.99)
-low_slope_color = Color(0.224813, 0.26, 0.1846, 1)
-high_slope_color = Color(0.136954, 0.0937332, 0.0937283, 1)
-ambient_light = Color(0.269905, 0.331702, 0.236689, 1)
-metadata/_custom_type_script = "uid://7n58awc2ols0"
-
 [sub_resource type="CompositorEffect" id="CompositorEffect_vvh5c"]
 resource_local_to_scene = false
 resource_name = ""
@@ -52,37 +21,35 @@ needs_motion_vectors = false
 needs_normal_roughness = false
 script = ExtResource("2_pyidc")
 regenerate = false
-side_length = 200
-mesh_scale = 1.0
+side_length = 400
+mesh_scale = 0.5
 wireframe = false
-noise_seed = 18
-zoom = 61.582
-offset = Vector3(123, 0, 1233)
-gradient_rotation = -124.367
+noise_seed = 135
+zoom = 139.5
+offset = Vector3(-200, 0, -326.08)
+gradient_rotation = 68.645
 octave_count = 12
-rotation = -180.0
-angular_variance = Vector2(0, 0)
-initial_amplitude = 0.5
-amplitude_decay = 0.45
-lacunarity = 2.0
-frequency_variance = Vector2(0, 0)
-height_scale = 50.0
-slope_damping = 0.2
-slope_threshold = Vector2(1.08, 0.98)
-low_slope_color = Color(0.83, 0.88, 0.94, 1)
-high_slope_color = Color(0.16, 0.1, 0.1, 1)
-ambient_light = Color(0.411765, 0.411765, 0.411765, 1)
+rotation = -26.99
+angular_variance = Vector2(-15, 15)
+initial_amplitude = 0.739
+amplitude_decay = 0.439
+lacunarity = 1.991
+frequency_variance = Vector2(-0.085, 0.115)
+height_scale = 90.9
+slope_damping = 0.155
+slope_threshold = Vector2(0.84, 0.98)
+low_slope_color = Color(0.366477, 0.373384, 0.0777902, 1)
+high_slope_color = Color(0.1, 0.05835, 0.049, 1)
+ambient_light = Color(0.192, 0.2712, 0.3, 1)
 metadata/_custom_type_script = "uid://7n58awc2ols0"
 
 [sub_resource type="Compositor" id="Compositor_1i1cu"]
-compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_pyidc"), SubResource("CompositorEffect_vvh5c")])
-
-[sub_resource type="BoxMesh" id="BoxMesh_pavbi"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_vvh5c")])
 
 [node name="Root" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.348572, 0.0392493, 0.93646, -8.73461e-08, -0.999123, 0.0418756, 0.937282, 0.0145966, 0.348266, 0, 0, 0)
+transform = Transform3D(0.587785, 0.0338782, 0.808308, 8.73461e-08, -0.999123, 0.0418757, 0.809017, -0.0246138, -0.587269, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.60854)
@@ -91,8 +58,3 @@ script = ExtResource("1_hekff")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7owt0")
 compositor = SubResource("Compositor_1i1cu")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 3.27909, 0)
-visible = false
-mesh = SubResource("BoxMesh_pavbi")

@@ -127,7 +127,7 @@ func initialize_render(framebuffer_format : int):
 	p_wire_shader = compile_shader(source_vertex, source_wire_fragment)
 
 	var vertex_buffer := PackedFloat32Array([])
-	var half_length = side_length / 2
+	var half_length = (side_length - 1) / 2.0
 
 	# Generate plane vertices on the xz plane
 	for x in side_length:
@@ -229,7 +229,6 @@ func initialize_render(framebuffer_format : int):
 # otherwise the game would freeze to regenerate the entire terrain every time the window size changes by 1 pixel
 # ideally shader recompilation is separated from the above function too, and generation of the vertex and index buffers also should be separated since that is what causes the stall
 func initialize_render_pipelines(framebuffer_format : int) -> void:
-
 	# The rest of this is setting up the render pipeline object, you can read the godot docs to see different settings here but they are largely irrelevant to this project
 	var raster_state = RDPipelineRasterizationState.new()
 	
@@ -450,7 +449,7 @@ const source_vertex = "
 
 		// Takes our xz positions and turns them into a random number between 0 and 1 using the above pseudo random function
 		float HashPosition(vec2 pos) {
-			return pseudo(pos + vec2(_Seed, _Seed + 4));
+			return pseudo(pos * vec2(_Seed, _Seed + 4));
 		}
 
 		// Generates a random gradient vector for the perlin noise lattice points, watch my perlin noise video for a more in depth explanation
@@ -640,7 +639,7 @@ const source_fragment = "
 
 		// Takes our xz positions and turns them into a random number between 0 and 1 using the above pseudo random function
 		float HashPosition(vec2 pos) {
-			return pseudo(pos + vec2(_Seed, _Seed + 4));
+			return pseudo(pos * vec2(_Seed, _Seed + 4));
 		}
 
 		// Generates a random gradient vector for the perlin noise lattice points, watch my perlin noise video for a more in depth explanation
