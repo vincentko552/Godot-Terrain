@@ -74,6 +74,10 @@ class_name DrawTerrainMesh extends CompositorEffect
 ## Additive light adjustment
 @export var ambient_light : Color = Color.DIM_GRAY
 
+@export_group("Fog Settings")
+
+@export_range(0.0, 1.0) var fog_density : float = 0.5
+@export var fog_color : Color = Color.AZURE
 
 var transform : Transform3D
 var light : DirectionalLight3D
@@ -335,7 +339,11 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
 	buffer.push_back(ambient_light.r)
 	buffer.push_back(ambient_light.g)
 	buffer.push_back(ambient_light.b)
-	buffer.push_back(1.0)
+	buffer.push_back(fog_density)
+	buffer.push_back(fog_color.r)
+	buffer.push_back(fog_color.g)
+	buffer.push_back(fog_color.b)
+	buffer.push_back(fog_color.a)
 	
 
 	# All of our settings are stored in a single uniform buffer, certainly not the best decision, but it's easy to work with
@@ -429,6 +437,7 @@ const source_vertex = "
 			float _FrequencyVarianceUpperBound;
 			float _SlopeDamping;
 			vec4 _AmbientLight;
+			vec4 fog_color;
 		};
 		
 		// This is the vertex data layout that we defined in initialize_render after line 198
@@ -620,6 +629,7 @@ const source_fragment = "
 			float _FrequencyVarianceUpperBound;
 			float _SlopeDamping;
 			vec4 _AmbientLight;
+			vec4 fog_color;
 		};
 		
 		// These are the variables that we expect to receive from the vertex shader
@@ -790,7 +800,9 @@ const source_fragment = "
 
 			// Combine lighting values, clip to prevent pixel values greater than 1 which would really really mess up the gamma correction below
 			vec4 lit = clamp(direct_light + ambient_light, vec4(0), vec4(1));
-
+			
+			
+			
 			// Convert from linear rgb to srgb for proper color output, ideally you'd do this as some final post processing effect because otherwise you will need to revert this gamma correction elsewhere
 			frag_color = pow(lit, vec4(2.2));
 		}
@@ -822,6 +834,7 @@ const source_wire_fragment = "
 			float _FrequencyVarianceUpperBound;
 			float _SlopeDamping;
 			vec4 _AmbientLight;
+			vec4 fog_color;
 		};
 		
 		layout(location = 2) in vec4 a_Color;

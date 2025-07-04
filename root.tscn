@@ -1,60 +1,154 @@
-[gd_scene load_steps=6 format=3 uid="uid://bs3wao3xrtlmq"]
+[gd_scene load_steps=23 format=3 uid="uid://bs3wao3xrtlmq"]
 
-[ext_resource type="Script" uid="uid://btn8i0m76hx2y" path="res://Scripts/Camera/debug_camera_controller.gd" id="1_hekff"]
-[ext_resource type="Script" uid="uid://7n58awc2ols0" path="res://Scripts/draw_terrain.gd" id="2_pyidc"]
+[ext_resource type="Texture2D" uid="uid://cra4i5fom8gab" path="res://qwantani_dawn_puresky_4k.hdr" id="3_jnlp7"]
+[ext_resource type="Script" uid="uid://7apyf0ajb141" path="res://Scripts/fps.gd" id="4_28aoi"]
+[ext_resource type="Shader" uid="uid://dcobldgxxyv00" path="res://Shaders/terrain.gdshader" id="4_jnlp7"]
+[ext_resource type="Texture2D" uid="uid://bkdvbf77raj3c" path="res://Resources/Textures/ground/textures/lichen_rock_diff_4k.jpg" id="6_bf3um"]
+[ext_resource type="Texture2D" uid="uid://uiyjxp85k0h1" path="res://Resources/Textures/rock/textures/rock_face_diff_4k.jpg" id="7_huihk"]
+[ext_resource type="Script" uid="uid://3y74qfj30jh8" path="res://Scripts/movement.gd" id="7_vyht1"]
+[ext_resource type="Shader" uid="uid://cxm6hm2d4no0o" path="res://Shaders/clouds.gdshader" id="8_bf3um"]
+[ext_resource type="Shader" uid="uid://cvqtj2kl4o1h3" path="res://Shaders/creature.gdshader" id="8_huihk"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_l8v81"]
+panorama = ExtResource("3_jnlp7")
+energy_multiplier = 0.5
+
+[sub_resource type="Sky" id="Sky_vyht1"]
+sky_material = SubResource("PanoramaSkyMaterial_l8v81")
 
 [sub_resource type="Environment" id="Environment_7owt0"]
-background_mode = 1
+background_mode = 2
 background_color = Color(0.239216, 0.239216, 0.239216, 1)
+sky = SubResource("Sky_vyht1")
+tonemap_mode = 1
 tonemap_white = 1.68
+ssao_enabled = true
 glow_normalized = true
 glow_intensity = 1.75
 glow_strength = 1.65
 glow_bloom = 0.33
-
-[sub_resource type="CompositorEffect" id="CompositorEffect_vvh5c"]
-resource_local_to_scene = false
-resource_name = ""
-enabled = true
-effect_callback_type = 4
-needs_motion_vectors = false
-needs_normal_roughness = false
-script = ExtResource("2_pyidc")
-regenerate = false
-side_length = 400
-mesh_scale = 0.5
-wireframe = false
-noise_seed = 135
-zoom = 139.5
-offset = Vector3(-200, 95.655, -326.08)
-gradient_rotation = 68.645
-octave_count = 12
-rotation = -26.99
-angular_variance = Vector2(-15, 15)
-initial_amplitude = 0.739
-amplitude_decay = 0.439
-lacunarity = 1.991
-frequency_variance = Vector2(-0.085, 0.115)
-height_scale = 90.9
-slope_damping = 0.155
-slope_threshold = Vector2(0.84, 0.98)
-low_slope_color = Color(0.366477, 0.373384, 0.0777902, 1)
-high_slope_color = Color(0.1, 0.05835, 0.049, 1)
-ambient_light = Color(0.192, 0.2712, 0.3, 1)
-metadata/_custom_type_script = "uid://7n58awc2ols0"
+fog_enabled = true
+fog_height = 2.15
+fog_height_density = 0.32
+volumetric_fog_density = 0.0555
 
 [sub_resource type="Compositor" id="Compositor_1i1cu"]
-compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_vvh5c"), null])
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_vvh5c"]
+size = Vector2(100, 100)
+subdivide_width = 200
+subdivide_depth = 200
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_28aoi"]
+render_priority = 0
+shader = ExtResource("4_jnlp7")
+shader_parameter/_Seed = 0.0
+shader_parameter/_GradientRotation = 0.0
+shader_parameter/_NoiseRotation = 22.18
+shader_parameter/_Offset = Vector3(0, 0, 0)
+shader_parameter/_Scale = 60.0
+shader_parameter/_Octaves = 10.0
+shader_parameter/_AngularVariance = Vector2(0, 0)
+shader_parameter/_InitialAmplitude = 33.235
+shader_parameter/_AmplitudeDecay = 0.45
+shader_parameter/_Lacunarity = 2.0
+shader_parameter/_FrequencyVarianceLowerBound = 0.0
+shader_parameter/_FrequencyVarianceUpperBound = 0.155
+shader_parameter/_TerrainHeight = 1.395
+shader_parameter/_TerrainThreshold = -2.48
+shader_parameter/_SlopeRange = Vector2(0.96, 0.98)
+shader_parameter/_SlopeDamping = 0.0
+shader_parameter/ground_texture = ExtResource("6_bf3um")
+shader_parameter/rock_texture = ExtResource("7_huihk")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_vyht1"]
+lightmap_size_hint = Vector2i(1502, 1502)
+size = Vector2(300, 1000)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_bf3um"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bf3um"]
+width = 256
+height = 256
+seamless = true
+seamless_blend_skirt = 0.168
+noise = SubResource("FastNoiseLite_bf3um")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_huihk"]
+render_priority = 0
+shader = ExtResource("8_bf3um")
+shader_parameter/noise = SubResource("NoiseTexture2D_bf3um")
+shader_parameter/scale = -0.02
+shader_parameter/time_scale = 0.025
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vyht1"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_vyht1"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_huihk"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tw3kd"]
+render_priority = 0
+shader = ExtResource("8_huihk")
+shader_parameter/ripple_center = Vector3(0, 0, 0)
+shader_parameter/ripple_strength = 4.63
+shader_parameter/ripple_frequency = 1.0
+shader_parameter/threshold = 1.005
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_huihk")
+shader_parameter/time_scale = 3.125
 
 [node name="Root" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.587785, 0.0338782, 0.808308, 8.73461e-08, -0.999123, 0.0418757, 0.809017, -0.0246138, -0.587269, 0, 0, 0)
-
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.60854)
-script = ExtResource("1_hekff")
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 10.2695, 0)
+shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7owt0")
 compositor = SubResource("Compositor_1i1cu")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("4_28aoi")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.00241, 0, 0, 0, 1.00241, 0, 0, 0, 1.00241, 8.53306, 2.96522, 0.24047)
+mesh = SubResource("PlaneMesh_vvh5c")
+surface_material_override/0 = SubResource("ShaderMaterial_28aoi")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.971001, 0, 0, 0, -0.977089, 0, 0, 0, 0.971001, 0, 24.2858, 0)
+mesh = SubResource("PlaneMesh_vyht1")
+surface_material_override/0 = SubResource("ShaderMaterial_huihk")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.941, 1.53765, 0)
+script = ExtResource("7_vyht1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0166645, 0)
+shape = SubResource("BoxShape3D_vyht1")
+debug_fill = false
+
+[node name="Neck" type="Node3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.488291, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.140268, 0)
+
+[node name="Fence" type="Node3D" parent="."]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Fence"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.584, 5.95535, 0)
+
+[node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="Fence/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -5.37919, 0)
+depth = 0.0
+polygon = PackedVector2Array(-2.18556, 8.57009, -4.95389, 4.03458, -0.780676, -6.1194, 2.78165, -19.7477, 6.89807, -31.3023, 5.25637, -38.5011, 1.05919, -43.4853, 0.344318, -47.4626, 1.91922, -49.8519, 7.45253, -49.736, 7.65371, -42.1199, 14.2835, -34.779, 14.8692, -24.7102, 11.5043, -14.5917, 12.1644, -7.86251, 9.42488, -3.16394, 8.20343, 3.80519, 7.84007, 9.9487, 4.74327, 12.4497, 0.512847, 13.0557, 2.19386, 7.2606)
+debug_color = Color(0, 0.595, 0.7, 1)
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.1451, 2.91209, -57.5539)
+mesh = SubResource("SphereMesh_vyht1")
+surface_material_override/0 = SubResource("ShaderMaterial_tw3kd")
