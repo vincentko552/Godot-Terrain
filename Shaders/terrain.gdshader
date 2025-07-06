@@ -3,11 +3,11 @@ shader_type spatial;
 // -----------------------
 // Noise Settings
 // -----------------------
-uniform float _Seed;                         // noise_seed
-uniform float _GradientRotation;            // gradient_rotation
-uniform float _NoiseRotation;               // rotation
-uniform vec3 _Offset;                       // offset
-uniform float _Scale;                       // zoom
+uniform float _Seed;
+uniform float _GradientRotation;
+uniform float _NoiseRotation;
+uniform vec3 _Offset;
+uniform float _Scale;
 
 // -----------------------
 // Octave Settings
@@ -23,8 +23,10 @@ uniform float _FrequencyVarianceUpperBound; // frequency_variance.y
 // -----------------------
 // Terrain
 // -----------------------
-uniform float _TerrainHeight;               // height_scale
+uniform float _TerrainHeight;
 uniform float _TerrainThreshold;
+uniform float _FalloffThreshold;
+uniform float _FalloffSpeed;
 
 // -----------------------
 // Material Settings
@@ -135,6 +137,11 @@ void vertex() {
 	vec3 n = fbm(noise_pos.xz);
 
 	VERTEX.y = max(_TerrainHeight * n.x + _TerrainHeight - _Offset.y + VERTEX.y, _TerrainThreshold);
+	
+	float distance_from_center = length(vec2(VERTEX.xz));
+	if (distance_from_center > _FalloffThreshold) {
+		VERTEX.y -= _FalloffSpeed * (distance_from_center - _FalloffThreshold) * (distance_from_center - _FalloffThreshold);
+	}
 	pos = VERTEX;
 }
 

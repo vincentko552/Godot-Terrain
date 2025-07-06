@@ -1,5 +1,6 @@
-[gd_scene load_steps=23 format=3 uid="uid://bs3wao3xrtlmq"]
+[gd_scene load_steps=32 format=3 uid="uid://bs3wao3xrtlmq"]
 
+[ext_resource type="Script" uid="uid://bq240i2ilwx6q" path="res://Scripts/day_night_transition.gd" id="1_gd4vy"]
 [ext_resource type="Texture2D" uid="uid://cra4i5fom8gab" path="res://qwantani_dawn_puresky_4k.hdr" id="3_jnlp7"]
 [ext_resource type="Script" uid="uid://7apyf0ajb141" path="res://Scripts/fps.gd" id="4_28aoi"]
 [ext_resource type="Shader" uid="uid://dcobldgxxyv00" path="res://Shaders/terrain.gdshader" id="4_jnlp7"]
@@ -8,6 +9,9 @@
 [ext_resource type="Script" uid="uid://3y74qfj30jh8" path="res://Scripts/movement.gd" id="7_vyht1"]
 [ext_resource type="Shader" uid="uid://cxm6hm2d4no0o" path="res://Shaders/clouds.gdshader" id="8_bf3um"]
 [ext_resource type="Shader" uid="uid://cvqtj2kl4o1h3" path="res://Shaders/creature.gdshader" id="8_huihk"]
+[ext_resource type="Shader" uid="uid://dietnxqg1jkbu" path="res://Shaders/water.gdshader" id="10_gd4vy"]
+[ext_resource type="Shader" uid="uid://ejjfe15s2t8" path="res://Shaders/color_banding.gdshader" id="10_tw3kd"]
+[ext_resource type="Shader" uid="uid://ejij5bf0hn3q" path="res://Shaders/grain.gdshader" id="12_qw60f"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_l8v81"]
 panorama = ExtResource("3_jnlp7")
@@ -28,6 +32,8 @@ glow_intensity = 1.75
 glow_strength = 1.65
 glow_bloom = 0.33
 fog_enabled = true
+fog_light_energy = 0.5
+fog_density = 0.0363
 fog_height = 2.15
 fog_height_density = 0.32
 volumetric_fog_density = 0.0555
@@ -35,7 +41,7 @@ volumetric_fog_density = 0.0555
 [sub_resource type="Compositor" id="Compositor_1i1cu"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_vvh5c"]
-size = Vector2(100, 100)
+size = Vector2(100, 120)
 subdivide_width = 200
 subdivide_depth = 200
 
@@ -56,8 +62,10 @@ shader_parameter/_FrequencyVarianceLowerBound = 0.0
 shader_parameter/_FrequencyVarianceUpperBound = 0.155
 shader_parameter/_TerrainHeight = 1.395
 shader_parameter/_TerrainThreshold = -2.48
+shader_parameter/_FalloffThreshold = 50.335
+shader_parameter/_FalloffSpeed = 0.355
 shader_parameter/_SlopeRange = Vector2(0.96, 0.98)
-shader_parameter/_SlopeDamping = 0.0
+shader_parameter/_SlopeDamping = -0.005
 shader_parameter/ground_texture = ExtResource("6_bf3um")
 shader_parameter/rock_texture = ExtResource("7_huihk")
 
@@ -84,20 +92,55 @@ shader_parameter/time_scale = 0.025
 [sub_resource type="BoxShape3D" id="BoxShape3D_vyht1"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_vyht1"]
+radius = 2.0
+height = 4.0
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_huihk"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_huihk"]
+noise = SubResource("FastNoiseLite_huihk")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tw3kd"]
 render_priority = 0
 shader = ExtResource("8_huihk")
 shader_parameter/ripple_center = Vector3(0, 0, 0)
-shader_parameter/ripple_strength = 4.63
-shader_parameter/ripple_frequency = 1.0
-shader_parameter/threshold = 1.005
+shader_parameter/ripple_strength = 3.201
+shader_parameter/ripple_frequency = 8.484
+shader_parameter/scale = 1.0
 shader_parameter/noise_tex = SubResource("NoiseTexture2D_huihk")
-shader_parameter/time_scale = 3.125
+shader_parameter/time_scale = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_huihk"]
+size = Vector2(100, 100)
+subdivide_width = 100
+subdivide_depth = 100
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_eji0w"]
+render_priority = 0
+shader = ExtResource("10_gd4vy")
+shader_parameter/speed = 1.0
+shader_parameter/amplitudes = PackedFloat32Array(0.1, 0.071, 0.128, 0.062, 0.146)
+shader_parameter/wavelengths = PackedFloat32Array(1, 5, 10, 200, 0.7)
+shader_parameter/water_color = Vector3(0.452, 0.1, 0.67)
+shader_parameter/height_factor = 2.0
+shader_parameter/height_color = Vector3(0.533, 0.551, 0.62)
+shader_parameter/stutter_coeff = 30.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qw60f"]
+shader = ExtResource("10_tw3kd")
+shader_parameter/use_banding = true
+shader_parameter/use_dithering = true
+shader_parameter/dither_matrix = Projection(-4, 0, -3, 1, 2, -2, 3, -1, -3, 1, -4, 0, 3, -1, 2, -2)
+shader_parameter/banding_steps = 42
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qwhpj"]
+shader = ExtResource("12_qw60f")
+shader_parameter/grain_strength = 4.0
 
 [node name="Root" type="Node3D"]
+
+[node name="DayNightManager" type="Node3D" parent="."]
+script = ExtResource("1_gd4vy")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 10.2695, 0)
@@ -108,22 +151,23 @@ environment = SubResource("Environment_7owt0")
 compositor = SubResource("Compositor_1i1cu")
 
 [node name="Label" type="Label" parent="."]
+visible = false
 offset_right = 40.0
 offset_bottom = 23.0
 script = ExtResource("4_28aoi")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="Terrain" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.00241, 0, 0, 0, 1.00241, 0, 0, 0, 1.00241, 8.53306, 2.96522, 0.24047)
 mesh = SubResource("PlaneMesh_vvh5c")
 surface_material_override/0 = SubResource("ShaderMaterial_28aoi")
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+[node name="Clouds" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.971001, 0, 0, 0, -0.977089, 0, 0, 0, 0.971001, 0, 24.2858, 0)
 mesh = SubResource("PlaneMesh_vyht1")
 surface_material_override/0 = SubResource("ShaderMaterial_huihk")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.941, 1.53765, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.4995, 1.53765, -41.4379)
 script = ExtResource("7_vyht1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
@@ -148,7 +192,35 @@ depth = 0.0
 polygon = PackedVector2Array(-2.18556, 8.57009, -4.95389, 4.03458, -0.780676, -6.1194, 2.78165, -19.7477, 6.89807, -31.3023, 5.25637, -38.5011, 1.05919, -43.4853, 0.344318, -47.4626, 1.91922, -49.8519, 7.45253, -49.736, 7.65371, -42.1199, 14.2835, -34.779, 14.8692, -24.7102, 11.5043, -14.5917, 12.1644, -7.86251, 9.42488, -3.16394, 8.20343, 3.80519, 7.84007, 9.9487, 4.74327, 12.4497, 0.512847, 13.0557, 2.19386, 7.2606)
 debug_color = Color(0, 0.595, 0.7, 1)
 
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.1451, 2.91209, -57.5539)
+[node name="Enemy" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.1352, 2.94892, -57.5689)
+visible = false
 mesh = SubResource("SphereMesh_vyht1")
 surface_material_override/0 = SubResource("ShaderMaterial_tw3kd")
+
+[node name="Water" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.1082, 0, -95.9258)
+mesh = SubResource("PlaneMesh_huihk")
+surface_material_override/0 = SubResource("ShaderMaterial_eji0w")
+
+[node name="ColorBanding" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="ColorBanding"]
+material = SubResource("ShaderMaterial_qw60f")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Grain" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="Grain"]
+material = SubResource("ShaderMaterial_qwhpj")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
