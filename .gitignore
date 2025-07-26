@@ -11,3 +11,6 @@ icon.svg*
 *.tmp
 *.import
 export_presets.cfg
+
+terrain.exe
+*.pck
