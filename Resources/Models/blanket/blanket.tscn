@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2udpq60su0v2"]
+
+[ext_resource type="PackedScene" uid="uid://06dt0262bqse" path="res://Resources/Models/blanket/blanket.fbx" id="1_2fh52"]
+[ext_resource type="Material" uid="uid://dxbb23u3m8u48" path="res://Resources/Models/blanket/blanket.tres" id="2_gx3nb"]
+
+[node name="blanket" instance=ExtResource("1_2fh52")]
+
+[node name="Plane_005" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_gx3nb")

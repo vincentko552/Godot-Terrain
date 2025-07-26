@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3 uid="uid://bbbmv3dbab2pp"]
+
+[ext_resource type="Texture2D" uid="uid://do2prm2i2cdvt" path="res://Resources/Models/sleeping_bag/sleeping_bag_DefaultMaterial_BaseColor.jpg" id="1_dskla"]
+[ext_resource type="Texture2D" uid="uid://ddbvhtxesambw" path="res://Resources/Models/sleeping_bag/sleeping_bag_DefaultMaterial_Height.jpg" id="2_h234r"]
+[ext_resource type="Texture2D" uid="uid://hnv801vh5ysk" path="res://Resources/Models/sleeping_bag/sleeping_bag_DefaultMaterial_Metallic.jpg" id="3_35syl"]
+[ext_resource type="Texture2D" uid="uid://b45apwg1ok45a" path="res://Resources/Models/sleeping_bag/sleeping_bag_DefaultMaterial_Normal.jpg" id="4_ij07n"]
+[ext_resource type="Texture2D" uid="uid://drnac642ktewa" path="res://Resources/Models/sleeping_bag/sleeping_bag_DefaultMaterial_Roughness.jpg" id="5_vhtr6"]
+
+[resource]
+albedo_texture = ExtResource("1_dskla")
+metallic = 1.0
+metallic_texture = ExtResource("3_35syl")
+roughness_texture = ExtResource("5_vhtr6")
+normal_enabled = true
+normal_texture = ExtResource("4_ij07n")
+heightmap_enabled = true
+heightmap_texture = ExtResource("2_h234r")

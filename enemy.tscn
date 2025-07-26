@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://btfpbh7upx8mx"]
+
+[ext_resource type="Shader" uid="uid://cvqtj2kl4o1h3" path="res://Shaders/creature.gdshader" id="1_7k104"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_vyht1"]
+radius = 2.0
+height = 4.0
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_huihk"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_huihk"]
+noise = SubResource("FastNoiseLite_huihk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tw3kd"]
+render_priority = 0
+shader = ExtResource("1_7k104")
+shader_parameter/ripple_center = Vector3(0, 0, 0)
+shader_parameter/ripple_strength = 3.201
+shader_parameter/ripple_frequency = 8.484
+shader_parameter/scale = 1.0
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_huihk")
+shader_parameter/time_scale = 1.0
+
+[node name="Enemy" type="MeshInstance3D"]
+mesh = SubResource("SphereMesh_vyht1")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("ShaderMaterial_tw3kd")

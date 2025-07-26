@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://b0xgrprepj4xd"]
+
+[ext_resource type="Script" uid="uid://dlchuahgx1wwv" path="res://Scripts/Interactable/bed.gd" id="1_634s4"]
+[ext_resource type="PackedScene" uid="uid://b2udpq60su0v2" path="res://Resources/Models/blanket/blanket.tscn" id="2_634s4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6w3ne"]
+size = Vector3(1.81598, 0.187073, 0.680725)
+
+[node name="Bed" type="Node3D"]
+script = ExtResource("1_634s4")
+
+[node name="blanket" parent="." instance=ExtResource("2_634s4")]
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(0.872257, 0, 0.489048, 0, 1, 0, -0.489048, 0, 0.872257, -0.00801427, 0.0323181, 0.072699)
+shape = SubResource("BoxShape3D_6w3ne")
+
+[connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
+[connection signal="area_exited" from="Area3D" to="." method="_on_area_3d_area_exited"]

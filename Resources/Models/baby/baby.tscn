@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5or0ukssciuq"]
+
+[ext_resource type="PackedScene" uid="uid://b2r8j47p8r8im" path="res://Resources/Models/baby/creature.fbx" id="1_pf0fw"]
+
+[node name="creature" instance=ExtResource("1_pf0fw")]
+transform = Transform3D(0.259416, 0, 0, 0, 0.259416, 0, 0, 0, 0.259416, 0, 0.816494, 0)

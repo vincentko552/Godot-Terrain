@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cxywfxv0ntn7t"]
+
+[ext_resource type="PackedScene" uid="uid://bgryy53im7nij" path="res://Resources/Models/sleeping_bag/sleeping_bag.fbx" id="1_pablj"]
+[ext_resource type="Material" uid="uid://bbbmv3dbab2pp" path="res://Resources/Models/sleeping_bag/sleeping_bag.tres" id="2_pablj"]
+
+[node name="sleeping_bag" instance=ExtResource("1_pablj")]
+
+[node name="Plane_002" parent="." index="0"]
+transform = Transform3D(211.381, 0, 0, 0, -1.199e-05, 100.579, 0, -100.579, -1.199e-05, 0, 0, 0)
+surface_material_override/0 = ExtResource("2_pablj")

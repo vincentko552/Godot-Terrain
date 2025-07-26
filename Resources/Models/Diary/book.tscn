@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://d1u6hnio3n7od"]
+
+[ext_resource type="PackedScene" uid="uid://c2geto8typn0" path="res://Resources/Models/Diary/book.fbx" id="1_205o8"]
+[ext_resource type="Material" uid="uid://7wl2pio3u40j" path="res://Resources/Models/Diary/book.tres" id="2_ikjvl"]
+
+[node name="book" instance=ExtResource("1_205o8")]
+
+[node name="Cube" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_ikjvl")
+
+[node name="Cube_001" parent="." index="1"]
+surface_material_override/0 = ExtResource("2_ikjvl")

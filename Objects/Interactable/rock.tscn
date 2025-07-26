@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://b7n17avhmiup0"]
+
+[ext_resource type="Script" uid="uid://dibcy5xi545um" path="res://Scripts/Interactable/rock.gd" id="1_133cf"]
+[ext_resource type="PackedScene" uid="uid://d4nch24epei41" path="res://Resources/Models/rock/rock.glb" id="2_133cf"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_133cf"]
+
+[node name="Rock" type="Node3D"]
+script = ExtResource("1_133cf")
+
+[node name="rock" parent="." instance=ExtResource("2_133cf")]
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_133cf")
+
+[connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
+[connection signal="area_exited" from="Area3D" to="." method="_on_area_3d_area_exited"]

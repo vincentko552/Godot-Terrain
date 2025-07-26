@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://bwh7hsst2t1r6"]
+
+[ext_resource type="Script" uid="uid://dkbvsubcddt0p" path="res://Scripts/Interactable/diary.gd" id="1_sasgj"]
+[ext_resource type="PackedScene" uid="uid://d1u6hnio3n7od" path="res://Resources/Models/Diary/book.tscn" id="2_sasgj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6w3ne"]
+size = Vector3(1, 0.222046, 1)
+
+[node name="Book" type="Node3D"]
+script = ExtResource("1_sasgj")
+
+[node name="book" parent="." instance=ExtResource("2_sasgj")]
+transform = Transform3D(0.46598, 0, 0, 0, 0.46598, 0, 0, 0, 0.46598, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0169067, 0)
+shape = SubResource("BoxShape3D_6w3ne")
+
+[connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
+[connection signal="area_exited" from="Area3D" to="." method="_on_area_3d_area_exited"]

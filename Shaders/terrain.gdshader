@@ -1,4 +1,5 @@
 shader_type spatial;
+render_mode cull_disabled;
 
 // -----------------------
 // Noise Settings
@@ -27,6 +28,9 @@ uniform float _TerrainHeight;
 uniform float _TerrainThreshold;
 uniform float _FalloffThreshold;
 uniform float _FalloffSpeed;
+uniform float _MaxFalloff;
+
+uniform float _DerivativesEpsilon;
 
 // -----------------------
 // Material Settings
@@ -35,6 +39,8 @@ uniform vec2 _SlopeRange;                   // slope_threshold
 uniform float _SlopeDamping;                // slope_damping
 uniform sampler2D ground_texture;
 uniform sampler2D rock_texture;
+
+uniform bool debug;
 
 float pseudo(vec2 v) {
 	v = fract(v / 128.0) * 128.0 + vec2(-64.340622, -72.465622);
@@ -131,16 +137,18 @@ vec3 fbm(vec2 position) {
 }
 
 varying vec3 pos;
+varying float before_max_pos;
 
 void vertex() {
 	vec3 noise_pos = (VERTEX + vec3(_Offset.x, 0.0, _Offset.z)) / _Scale;
 	vec3 n = fbm(noise_pos.xz);
-
+	
+	before_max_pos = _TerrainHeight * n.x + _TerrainHeight - _Offset.y + VERTEX.y;
 	VERTEX.y = max(_TerrainHeight * n.x + _TerrainHeight - _Offset.y + VERTEX.y, _TerrainThreshold);
 	
 	float distance_from_center = length(vec2(VERTEX.xz));
 	if (distance_from_center > _FalloffThreshold) {
-		VERTEX.y -= _FalloffSpeed * (distance_from_center - _FalloffThreshold) * (distance_from_center - _FalloffThreshold);
+		VERTEX.y -= min(_MaxFalloff, _FalloffSpeed * (distance_from_center - _FalloffThreshold) * (distance_from_center - _FalloffThreshold));
 	}
 	pos = VERTEX;
 }
@@ -155,5 +163,8 @@ void fragment() {
 	float blend_factor = smoothstep(_SlopeRange.x, _SlopeRange.y, 1.0 - slope_normal.y);
 	vec4 albedo = mix(ground_color, rock_color, vec4(blend_factor));
 
-	ALBEDO = albedo.rgb;
+	if (debug && before_max_pos <= _TerrainThreshold)
+		ALBEDO = vec3(1.0f);
+	else ALBEDO = albedo.rgb;
+	
 }

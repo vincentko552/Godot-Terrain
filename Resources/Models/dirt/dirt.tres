@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3 uid="uid://b0my3axtctgkk"]
+
+[ext_resource type="Texture2D" uid="uid://ne25gecltuxr" path="res://Resources/Models/dirt/dirt_patch_DefaultMaterial_BaseColor.jpg" id="1_ye4vf"]
+[ext_resource type="Texture2D" uid="uid://kgbple2f5g7q" path="res://Resources/Models/dirt/dirt_patch_DefaultMaterial_Height.jpg" id="2_ky53x"]
+[ext_resource type="Texture2D" uid="uid://b4ybxmwbm2o7h" path="res://Resources/Models/dirt/dirt_patch_DefaultMaterial_Metallic.jpg" id="3_2dnk0"]
+[ext_resource type="Texture2D" uid="uid://c2ia6nm8yaleg" path="res://Resources/Models/dirt/dirt_patch_DefaultMaterial_Normal.jpg" id="4_tsnlo"]
+[ext_resource type="Texture2D" uid="uid://dt3mqkhpfvh3p" path="res://Resources/Models/dirt/dirt_patch_DefaultMaterial_Roughness.jpg" id="5_17i75"]
+
+[resource]
+albedo_texture = ExtResource("1_ye4vf")
+metallic = 1.0
+metallic_texture = ExtResource("3_2dnk0")
+roughness_texture = ExtResource("5_17i75")
+normal_enabled = true
+normal_texture = ExtResource("4_tsnlo")
+heightmap_enabled = true
+heightmap_texture = ExtResource("2_ky53x")

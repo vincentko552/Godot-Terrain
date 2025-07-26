@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3 uid="uid://7wl2pio3u40j"]
+
+[ext_resource type="Texture2D" uid="uid://dgavw517uwqti" path="res://Resources/Textures/diary/book_DefaultMaterial_BaseColor.jpg" id="1_ts0ba"]
+[ext_resource type="Texture2D" uid="uid://cobmq8u16gf4a" path="res://Resources/Textures/diary/book_DefaultMaterial_Height.jpg" id="2_drr2u"]
+[ext_resource type="Texture2D" uid="uid://cvegxcvrv4t2o" path="res://Resources/Textures/diary/book_DefaultMaterial_Metallic.jpg" id="3_pnmwv"]
+[ext_resource type="Texture2D" uid="uid://btlsu50hui0e8" path="res://Resources/Textures/diary/book_DefaultMaterial_Normal.jpg" id="4_togoy"]
+[ext_resource type="Texture2D" uid="uid://bd7qbona435yx" path="res://Resources/Textures/diary/book_DefaultMaterial_Roughness.jpg" id="5_313dt"]
+
+[resource]
+albedo_texture = ExtResource("1_ts0ba")
+metallic = 1.0
+metallic_texture = ExtResource("3_pnmwv")
+roughness_texture = ExtResource("5_313dt")
+normal_enabled = true
+normal_texture = ExtResource("4_togoy")
+heightmap_enabled = true
+heightmap_texture = ExtResource("2_drr2u")

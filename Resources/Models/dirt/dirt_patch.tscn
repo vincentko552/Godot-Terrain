@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://bxolyrev8sdyo"]
+
+[ext_resource type="PackedScene" uid="uid://ddla4jc14memw" path="res://Resources/Models/dirt/dirt_patch.fbx" id="1_eii3r"]
+[ext_resource type="Material" uid="uid://b0my3axtctgkk" path="res://Resources/Models/dirt/dirt.tres" id="2_tmc2e"]
+[ext_resource type="Script" uid="uid://drbm3xgawcx5y" path="res://Scripts/Interactable/dirt_patch.gd" id="2_yaxhu"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ba0x5"]
+
+[node name="dirt_patch" instance=ExtResource("1_eii3r")]
+script = ExtResource("2_yaxhu")
+
+[node name="SurfPatch" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_tmc2e")
+
+[node name="Area3D" type="Area3D" parent="." index="1"]
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" index="0"]
+shape = SubResource("BoxShape3D_ba0x5")
+
+[connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
+[connection signal="area_exited" from="Area3D" to="." method="_on_area_3d_area_exited"]
+[connection signal="input_event" from="Area3D" to="." method="_on_area_3d_input_event"]

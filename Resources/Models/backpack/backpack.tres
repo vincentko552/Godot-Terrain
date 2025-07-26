@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3 uid="uid://dkb6wsrkskmw2"]
+
+[ext_resource type="Texture2D" uid="uid://d374cnw8lelkc" path="res://Resources/Models/backpack/backpack_DefaultMaterial_BaseColor.jpg" id="1_2in51"]
+[ext_resource type="Texture2D" uid="uid://b1td2eywjl6ws" path="res://Resources/Models/backpack/backpack_DefaultMaterial_Height.jpg" id="2_o3q6i"]
+[ext_resource type="Texture2D" uid="uid://c6xjwcmgjqt63" path="res://Resources/Models/backpack/backpack_DefaultMaterial_Metallic.jpg" id="3_reeqi"]
+[ext_resource type="Texture2D" uid="uid://1twrroalcdi5" path="res://Resources/Models/backpack/backpack_DefaultMaterial_Normal.jpg" id="4_0ue4o"]
+[ext_resource type="Texture2D" uid="uid://bkmm8f07q5ggg" path="res://Resources/Models/backpack/backpack_DefaultMaterial_Roughness.jpg" id="5_d3nrv"]
+
+[resource]
+albedo_texture = ExtResource("1_2in51")
+metallic = 1.0
+metallic_texture = ExtResource("3_reeqi")
+roughness_texture = ExtResource("5_d3nrv")
+normal_enabled = true
+normal_texture = ExtResource("4_0ue4o")
+heightmap_enabled = true
+heightmap_texture = ExtResource("2_o3q6i")

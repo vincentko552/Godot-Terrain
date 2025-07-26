@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3 uid="uid://b0ibl5ipkuqjo"]
+
+[ext_resource type="Texture2D" uid="uid://cdh10n0p5xdo0" path="res://Resources/Textures/fireplace/rock_Material_BaseColor.jpg" id="1_7bq6f"]
+[ext_resource type="Texture2D" uid="uid://cdc5m2siatqjv" path="res://Resources/Textures/fireplace/rock_Material_Height.jpg" id="2_huwar"]
+[ext_resource type="Texture2D" uid="uid://4iaqsi5v5xib" path="res://Resources/Textures/fireplace/rock_Material_Metallic.jpg" id="3_1r54r"]
+[ext_resource type="Texture2D" uid="uid://0fau7f5k6do" path="res://Resources/Textures/fireplace/rock_Material_Normal.jpg" id="4_c01e7"]
+[ext_resource type="Texture2D" uid="uid://dn748dq152882" path="res://Resources/Textures/fireplace/rock_Material_Roughness.jpg" id="5_dm1cd"]
+
+[resource]
+albedo_texture = ExtResource("1_7bq6f")
+metallic = 1.0
+metallic_texture = ExtResource("3_1r54r")
+roughness_texture = ExtResource("5_dm1cd")
+normal_enabled = true
+normal_texture = ExtResource("4_c01e7")
+heightmap_enabled = true
+heightmap_texture = ExtResource("2_huwar")
