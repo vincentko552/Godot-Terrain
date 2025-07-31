@@ -1,4 +1,4 @@
-extends TextEdit
+extends Label
 class_name DiaryText
 
 @export var diary_entries: Dictionary[int, String] = {}
@@ -10,6 +10,7 @@ var page: int = 0
 
 func _ready() -> void:
 	text = diary_entries.get(page)
+	turn_page(0)
 
 func turn_page(direction: int):
 	page += direction

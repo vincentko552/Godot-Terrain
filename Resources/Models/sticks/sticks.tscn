@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://dng5l0ks0ag4y"]
+
+[ext_resource type="PackedScene" uid="uid://ct07xet812r8" path="res://Resources/Models/sticks/sticks.fbx" id="1_24p5h"]
+[ext_resource type="Material" uid="uid://b0ibl5ipkuqjo" path="res://Resources/Models/fireplace/fireplace.tres" id="2_5tfdh"]
+
+[node name="sticks" instance=ExtResource("1_24p5h")]
+
+[node name="Cube_054" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_5tfdh")

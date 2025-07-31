@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://brm5k3drpe615"]
+
+[ext_resource type="Script" uid="uid://b6ro17qtxry0s" path="res://Objects/Interactable/sticks.gd" id="1_r5rdg"]
+[ext_resource type="PackedScene" uid="uid://dng5l0ks0ag4y" path="res://Resources/Models/sticks/sticks.tscn" id="2_r5rdg"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6w3ne"]
+
+[node name="Sticks" type="Node3D"]
+script = ExtResource("1_r5rdg")
+
+[node name="sticks" parent="." instance=ExtResource("2_r5rdg")]
+transform = Transform3D(0.338173, 0, 0, 0, 0.338173, 0, 0, 0, 0.338173, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_6w3ne")
+
+[connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]

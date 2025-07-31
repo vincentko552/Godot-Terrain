@@ -1,0 +1,19 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://dsxkqecw0q117"]
+
+[ext_resource type="StyleBox" uid="uid://br83bio1mgb0t" path="res://button_style.tres" id="1_amlv4"]
+
+[resource]
+Button/colors/font_color = Color(0.68, 0.6188, 0.476, 0.435294)
+Button/colors/font_hover_color = Color(0.86, 0.7869, 0.602, 0.435294)
+Button/colors/font_hover_pressed_color = Color(0.94, 0.8601, 0.658, 0.435294)
+Button/styles/disabled = ExtResource("1_amlv4")
+Button/styles/disabled_mirrored = ExtResource("1_amlv4")
+Button/styles/focus = ExtResource("1_amlv4")
+Button/styles/hover = ExtResource("1_amlv4")
+Button/styles/hover_mirrored = ExtResource("1_amlv4")
+Button/styles/hover_pressed = ExtResource("1_amlv4")
+Button/styles/hover_pressed_mirrored = ExtResource("1_amlv4")
+Button/styles/normal = ExtResource("1_amlv4")
+Button/styles/normal_mirrored = ExtResource("1_amlv4")
+Button/styles/pressed = ExtResource("1_amlv4")
+Button/styles/pressed_mirrored = ExtResource("1_amlv4")

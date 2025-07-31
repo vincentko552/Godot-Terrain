@@ -1,0 +1,111 @@
+[gd_scene load_steps=7 format=3 uid="uid://ccts46b1qd02q"]
+
+[ext_resource type="Script" uid="uid://bs5xpk58oyuo3" path="res://Scripts/turn_page.gd" id="1_m8236"]
+[ext_resource type="Script" uid="uid://lcogua6gdjad" path="res://Scripts/exit_button.gd" id="2_sjrmg"]
+[ext_resource type="Script" uid="uid://cclcnhoorw8i3" path="res://Scripts/diary_text.gd" id="3_e8gkh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e8gkh"]
+bg_color = Color(0.259294, 0.259294, 0.259294, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.340339, 0.340339, 0.340339, 1)
+border_blend = true
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sjrmg"]
+bg_color = Color(0.00184107, 0.00184107, 0.00184107, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.340339, 0.340339, 0.340339, 1)
+border_blend = true
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="Theme" id="Theme_sjrmg"]
+Button/colors/font_color = Color(0.22, 0.22, 0.22, 1)
+Button/constants/outline_size = 4
+Button/fonts/font = null
+Button/styles/hover = SubResource("StyleBoxFlat_e8gkh")
+Button/styles/normal = SubResource("StyleBoxFlat_sjrmg")
+
+[node name="DiaryLayer" type="CanvasLayer"]
+layer = 128
+
+[node name="ForwardButton" type="Button" parent="." node_paths=PackedStringArray("panel")]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -46.0
+offset_top = -9.5
+offset_right = -24.0
+offset_bottom = 21.5
+grow_horizontal = 0
+grow_vertical = 2
+text = ">"
+script = ExtResource("1_m8236")
+panel = NodePath("../Label")
+
+[node name="BackButton" type="Button" parent="." node_paths=PackedStringArray("panel")]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 22.206
+offset_top = -9.5
+offset_right = 44.206
+offset_bottom = 21.5
+grow_vertical = 2
+text = "<"
+script = ExtResource("1_m8236")
+direction = -1
+panel = NodePath("../Label")
+
+[node name="CloseButton" type="Button" parent="." node_paths=PackedStringArray("ui")]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -49.0
+offset_top = -99.5
+offset_right = -32.0
+offset_bottom = -77.5
+grow_horizontal = 0
+grow_vertical = 2
+theme = SubResource("Theme_sjrmg")
+theme_override_font_sizes/font_size = 10
+text = "X"
+script = ExtResource("2_sjrmg")
+ui = NodePath("..")
+
+[node name="Label" type="Label" parent="." node_paths=PackedStringArray("back_button", "forward_button")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -94.5
+offset_top = -79.5
+offset_right = 94.5
+offset_bottom = 74.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Some random text you know"
+autowrap_mode = 2
+script = ExtResource("3_e8gkh")
+back_button = NodePath("../BackButton")
+forward_button = NodePath("../ForwardButton")
+
+[connection signal="pressed" from="ForwardButton" to="ForwardButton" method="_on_pressed"]
+[connection signal="pressed" from="BackButton" to="BackButton" method="_on_pressed"]
+[connection signal="pressed" from="CloseButton" to="CloseButton" method="_on_pressed"]
